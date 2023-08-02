@@ -31,16 +31,16 @@ let Engine = EngineImport;
 
 const defaultParams = {
     chainId: "31337,",
-  worldAddress: "0xD84379CEae14AA33C123Af12424A37803F885889",
-  rpc: "http://localhost:8545",
-  wsRpc: "ws://localhost:8545",
+  worldAddress: "0xdD84126189e578c2ae86Ed46aD865a7500B4016F",
+  rpc: "https://l2-node.regtest.trustless.computer",
+  wsRpc: "wss://l2-node.regtest.trustless.computer",
   initialBlockNumber: "1",
   snapshot: "http://localhost:50062",
   stream: "http://localhost:50052",
   relay: "http://localhost:50072",
   faucet: "http://localhost:50082",
-  blockTime: "1000",
-  blockExplorer: "https://blockscout.com/optimism/opcraft",
+  blockTime: "2000",
+  blockExplorer: "https://nos-explorer.regtest.trustless.computer/",
 };
 
 export const ecs = {
