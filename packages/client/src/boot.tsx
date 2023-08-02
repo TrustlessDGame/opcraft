@@ -33,7 +33,7 @@ const defaultParams = {
     chainId: "31337,",
   worldAddress: "0xdD84126189e578c2ae86Ed46aD865a7500B4016F",
   rpc: "https://l2-node.regtest.trustless.computer",
-  wsRpc: "wss://l2-node.regtest.trustless.computer",
+  wsRpc: "wss://l2-node.regtest.trustless.computer/ws",
   initialBlockNumber: "1",
   snapshot: "http://localhost:50062",
   stream: "http://localhost:50052",
