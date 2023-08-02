@@ -30,7 +30,7 @@ let registerUIComponents = registerUIComponentsImport;
 let Engine = EngineImport;
 
 const defaultParams = {
-    chainId: "31337,",
+    chainId: "42070,",
   worldAddress: "0xdD84126189e578c2ae86Ed46aD865a7500B4016F",
   rpc: "https://l2-node.regtest.trustless.computer",
   wsRpc: "wss://l2-node.regtest.trustless.computer/ws",
