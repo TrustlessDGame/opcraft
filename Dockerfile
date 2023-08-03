@@ -1,7 +1,7 @@
 FROM node:18-alpine AS base
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssh git make python2
+RUN apk add --no-cache libc6-compat openssh git make python3
 RUN git config --global url."https://github".insteadOf ssh://git@github
 
 WORKDIR /app
