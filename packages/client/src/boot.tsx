@@ -31,16 +31,16 @@ let Engine = EngineImport;
 
 const defaultParams = {
     chainId: "42070,",
-  worldAddress: "0xdD84126189e578c2ae86Ed46aD865a7500B4016F",
+  worldAddress: "0x0Fc4219F445213A2307e81bf0B95326eeA08Cb2f",
   rpc: "https://l2-node.regtest.trustless.computer",
   wsRpc: "wss://l2-node.regtest.trustless.computer/ws",
-  initialBlockNumber: "1",
+  initialBlockNumber: "2030400",
   snapshot: "http://localhost:50062",
   stream: "http://localhost:50052",
   relay: "http://localhost:50072",
   faucet: "http://localhost:50082",
   blockTime: "2000",
-  blockExplorer: "https://nos-explorer.regtest.trustless.computer/",
+  blockExplorer: "https://nos-explorer.regtest.trustless.computer",
 };
 
 export const ecs = {

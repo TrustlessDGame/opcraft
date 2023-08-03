@@ -85,7 +85,7 @@ export async function createNetworkLayer(config: GameConfig) {
     typeof components,
     SystemTypes
   >(getNetworkConfig(config), world, components, SystemAbis, {
-    initialGasPrice: 2_000_000,
+    initialGasPrice: 2_000_000_000,
   });
 
   // Relayer setup
