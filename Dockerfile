@@ -1,26 +1,50 @@
-FROM node:18-alpine AS base
+FROM python:3.10.12-alpine AS base
 
-FROM base AS deps
-RUN apk add --no-cache libc6-compat openssh git make python3
+FROM base AS builder
+RUN apk add --no-cache \
+    libc6-compat \
+    openssh \
+    git \
+    make \
+    nodejs \
+    npm \
+    build-base \
+    gcc \
+    bash \
+    curl \
+    jq
+
 RUN git config --global url."https://github".insteadOf ssh://git@github
 
 WORKDIR /app
+RUN npm install -g yarn
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* lerna.json ./
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN yarn install --network-concurrency 1
+RUN yarn
 
-FROM base AS builder
-WORKDIR /app
+RUN mkdir -p packages/client
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY packages/client/package.json packages/client/
+COPY packages/client/yarn.lock* packages/client/
+
+COPY packages/contracts/package.json packages/client/
+COPY packages/contracts/yarn.lock* packages/client/
+
+RUN cd packages/client \
+    && yarn install \
+    && cd packages/contracts \
+    && yarn install
+
 COPY . .
+#RUN cd packages/client \
+#    && yarn build
+RUN yarn lerna run prepare
 RUN yarn workspace client run build
 
-FROM base AS runner
-WORKDIR /app
+# production environment
+FROM nginx:stable as runner
+COPY --from=builder /app/packages/client/dist /usr/share/nginx/html
 
-COPY --from=builder /app/client/public ./public
-
-EXPOSE 3000
-
-CMD ["yarn", "workspace", "client", "run", "prod"]
+COPY etc/nginx/nginx-docker.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

@@ -12,6 +12,7 @@
     "@improbable-eng/grpc-web": "^0.15.0",
     "@latticexyz/ecs-browser": "1.22.0",
     "@latticexyz/network": "1.22.0",
+    "@latticexyz/noise": "1.22.0",
     "@latticexyz/phaserx": "1.22.0",
     "@latticexyz/recs": "1.22.0",
     "@latticexyz/services": "1.22.0",
