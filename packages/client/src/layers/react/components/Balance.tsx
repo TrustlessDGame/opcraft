@@ -7,6 +7,11 @@ import { FaucetServiceClient } from "@latticexyz/services/protobuf/ts/faucet/fau
 import { ActionState } from "@latticexyz/std-client";
 import { ActionStatusIcon } from "./Action";
 import { Observable } from "rxjs";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
+import CopyIcon from "./icons/CopyIcon";
+import Topup from "./Topup";
+import Export from "./Export";
 
 const DEFAULT_TEXT = "Play OPCraft https://bit.ly/3VCVYyt @latticexyz @optimismFND\n\n";
 const TWITTER_URL = "https://twitter.com/intent/tweet?text=";
@@ -33,8 +38,10 @@ export const Balance: React.FC<{
   }
 
   async function updateBalance() {
-    const balance = await signer.getBalance().then((v) => v.div(BigNumber.from(10).pow(9)).toNumber());
-    setBalance(balance);
+    // const balance = await signer.getBalance().then((v) => v.div(BigNumber.from(10).pow(9)).toNumber());
+    const balance = await signer.getBalance();
+    console.log({ balance });
+    setBalance(Number(ethers.utils.formatEther(balance.toString())));
   }
 
   async function updateTimeUntilDrip(username: string) {
@@ -44,8 +51,9 @@ export const Balance: React.FC<{
 
   // Update balance in regular intervals
   useEffect(() => {
-    const subscription = balanceGwei$.subscribe((balance) => {
-      setBalance(balance);
+    const subscription = balanceGwei$.subscribe((balanceGwei) => {
+      const balanceEther = parseFloat((balanceGwei / 1000000000).toFixed(4)); // Convert Gwei to Ether
+      setBalance(balanceEther);
     });
     return () => subscription?.unsubscribe();
   }, []);
@@ -116,29 +124,43 @@ export const Balance: React.FC<{
     </Relative>
   );
 
+  const formatAddress = (address: string, prefix: number, suffix: number) => {
+    const prefixLength = prefix || 4;
+    const suffixLength = suffix || 4;
+
+    const truncatedAddress = `${address.slice(0, prefixLength)}...${address.slice(-suffixLength)}`;
+
+    return truncatedAddress;
+  };
+
   return (
     <>
       <BalanceContainer>
         <p>
-          <Title>Hello,</Title> {username && locked ? "@" + username : address?.substring(0, 6) + "..."}
+          <Title>Hello,</Title> {username && locked ? "@" + username : formatAddress(address, 4, 4)}
+          <CopyIcon text={address} />
         </p>
-        <p>Balance: {balance} GWEI</p>
+        <p>Balance: {balance} TC</p>
         {open ? TwitterBox : null}
         {faucet && (
-          <TwitterButton disabled={!open && timeToDrip > 0} onClick={onRequestDrip}>
-            {open ? (
-              "Cancel"
-            ) : timeToDrip > 0 ? (
-              `${String(Math.floor(timeToDrip / 60)).padStart(2, "0")}:${String(timeToDrip % 60).padStart(
-                2,
-                "0"
-              )} till next drip`
-            ) : status ? (
-              <ActionStatusIcon state={status} />
-            ) : (
-              "Request drip"
-            )}
-          </TwitterButton>
+          // <TwitterButton disabled={!open && timeToDrip > 0} onClick={onRequestDrip}>
+          //   {open ? (
+          //     "Cancel"
+          //   ) : timeToDrip > 0 ? (
+          //     `${String(Math.floor(timeToDrip / 60)).padStart(2, "0")}:${String(timeToDrip % 60).padStart(
+          //       2,
+          //       "0"
+          //     )} till next drip`
+          //   ) : status ? (
+          //     <ActionStatusIcon state={status} />
+          //   ) : (
+          //     "Request drip"
+          //   )}
+          // </TwitterButton>
+          <Buttons>
+            <Topup address={address} />
+            <Export address={address} />
+          </Buttons>
         )}
       </BalanceContainer>
     </>
@@ -148,6 +170,21 @@ export const Balance: React.FC<{
 const BalanceContainer = styled(Container)`
   line-height: 1;
   pointer-events: all;
+
+  .copy-icon {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 0;
+    margin-top: -5px;
+    cursor: pointer;
+  }
+
+  .wrap-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
 
   .ActionStatus--spin {
     animation: spin 1s linear infinite;
@@ -202,4 +239,5 @@ const Buttons = styled.div`
   display: grid;
   grid-gap: 9px;
   grid-template-columns: 1fr 1fr;
+  margin-top: 10px;
 `;
