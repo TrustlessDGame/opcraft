@@ -18,11 +18,9 @@ RUN git config --global url."https://github".insteadOf ssh://git@github
 
 WORKDIR /app
 RUN npm install -g yarn
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* lerna.json ./
-
-RUN yarn
 
 RUN mkdir -p packages/client
+RUN mkdir -p packages/contracts
 
 COPY packages/client/package.json packages/client/
 COPY packages/client/yarn.lock* packages/client/
@@ -30,15 +28,20 @@ COPY packages/client/yarn.lock* packages/client/
 COPY packages/contracts/package.json packages/client/
 COPY packages/contracts/yarn.lock* packages/client/
 
-RUN cd packages/client \
-    && yarn install \
-    && cd packages/contracts \
-    && yarn install
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* lerna.json ./
+
+
+RUN cd packages/contracts \
+        && yarn install
+
+
+RUN yarn install
+
 
 COPY . .
+RUN yarn
 #RUN cd packages/client \
 #    && yarn build
-RUN yarn lerna run prepare
 RUN yarn workspace client run build
 
 # production environment
